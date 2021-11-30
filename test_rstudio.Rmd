@@ -97,6 +97,205 @@ out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(240,160),
               compress=TRUE, multithread=TRUE) 
 head(out)
 
+##                               reads.in reads.out
+## F3D0_S188_L001_R1_001.fastq       7793      7113
+## F3D1_S189_L001_R1_001.fastq       5869      5299
+## F3D141_S207_L001_R1_001.fastq     5958      5463
+## F3D142_S208_L001_R1_001.fastq     3183      2914
+## F3D143_S209_L001_R1_001.fastq     3178      2941
+## F3D144_S210_L001_R1_001.fastq     4827      4312
+
+
+derepFs <- derepFastq(filtFs, verbose=TRUE)
+derepRs <- derepFastq(filtRs, verbose=TRUE)
+
+# Name the derep-class objects by the sample names
+names(derepFs) <- sampleNames
+names(derepRs) <- sampleNames
+
+errF <- learnErrors(filtFs, multithread=TRUE)
+
+## Initializing error rates to maximum possible estimate.
+## Sample 1 - 7113 reads in 1979 unique sequences.
+## Sample 2 - 5299 reads in 1639 unique sequences.
+## Sample 3 - 5463 reads in 1477 unique sequences.
+## Sample 4 - 2914 reads in 904 unique sequences.
+## Sample 5 - 2941 reads in 939 unique sequences.
+## Sample 6 - 4312 reads in 1267 unique sequences.
+## Sample 7 - 6741 reads in 1756 unique sequences.
+## Sample 8 - 4560 reads in 1438 unique sequences.
+## Sample 9 - 15637 reads in 3590 unique sequences.
+## Sample 10 - 11413 reads in 2762 unique sequences.
+## Sample 11 - 12017 reads in 3021 unique sequences.
+## Sample 12 - 5032 reads in 1566 unique sequences.
+## Sample 13 - 18075 reads in 3707 unique sequences.
+## Sample 14 - 6250 reads in 1479 unique sequences.
+## Sample 15 - 4052 reads in 1195 unique sequences.
+## Sample 16 - 7369 reads in 1832 unique sequences.
+## Sample 17 - 4765 reads in 1183 unique sequences.
+## Sample 18 - 4871 reads in 1382 unique sequences.
+## Sample 19 - 6504 reads in 1709 unique sequences.
+## Sample 20 - 4314 reads in 897 unique sequences.
+##    selfConsist step 2 
+##    selfConsist step 3 
+##    selfConsist step 4 
+##    selfConsist step 5 
+## 
+## 
+## Convergence after  5  rounds.
+## Total reads used:  139642
+
+errR <- learnErrors(filtRs, multithread=TRUE)
+
+## Initializing error rates to maximum possible estimate.
+## Sample 1 - 7113 reads in 1660 unique sequences.
+## Sample 2 - 5299 reads in 1349 unique sequences.
+## Sample 3 - 5463 reads in 1335 unique sequences.
+## Sample 4 - 2914 reads in 853 unique sequences.
+## Sample 5 - 2941 reads in 880 unique sequences.
+## Sample 6 - 4312 reads in 1286 unique sequences.
+## Sample 7 - 6741 reads in 1803 unique sequences.
+## Sample 8 - 4560 reads in 1265 unique sequences.
+## Sample 9 - 15637 reads in 3414 unique sequences.
+## Sample 10 - 11413 reads in 2522 unique sequences.
+## Sample 11 - 12017 reads in 2771 unique sequences.
+## Sample 12 - 5032 reads in 1415 unique sequences.
+## Sample 13 - 18075 reads in 3290 unique sequences.
+## Sample 14 - 6250 reads in 1390 unique sequences.
+## Sample 15 - 4052 reads in 1134 unique sequences.
+## Sample 16 - 7369 reads in 1635 unique sequences.
+## Sample 17 - 4765 reads in 1084 unique sequences.
+## Sample 18 - 4871 reads in 1161 unique sequences.
+## Sample 19 - 6504 reads in 1502 unique sequences.
+## Sample 20 - 4314 reads in 732 unique sequences.
+##    selfConsist step 2 
+##    selfConsist step 3 
+##    selfConsist step 4 
+##    selfConsist step 5 
+##    selfConsist step 6 
+## 
+## 
+## Convergence after  6  rounds.
+## Total reads used:  139642
+
+plotErrors(errF)
+plotErrors(errR)
+
+
+dadaFs <- dada(derepFs, err=errF, multithread=TRUE)
+## Sample 1 - 7113 reads in 1979 unique sequences.
+## Sample 2 - 5299 reads in 1639 unique sequences.
+## Sample 3 - 5463 reads in 1477 unique sequences.
+## Sample 4 - 2914 reads in 904 unique sequences.
+## Sample 5 - 2941 reads in 939 unique sequences.
+## Sample 6 - 4312 reads in 1267 unique sequences.
+## Sample 7 - 6741 reads in 1756 unique sequences.
+## Sample 8 - 4560 reads in 1438 unique sequences.
+## Sample 9 - 15637 reads in 3590 unique sequences.
+## Sample 10 - 11413 reads in 2762 unique sequences.
+## Sample 11 - 12017 reads in 3021 unique sequences.
+## Sample 12 - 5032 reads in 1566 unique sequences.
+## Sample 13 - 18075 reads in 3707 unique sequences.
+## Sample 14 - 6250 reads in 1479 unique sequences.
+## Sample 15 - 4052 reads in 1195 unique sequences.
+## Sample 16 - 7369 reads in 1832 unique sequences.
+## Sample 17 - 4765 reads in 1183 unique sequences.
+## Sample 18 - 4871 reads in 1382 unique sequences.
+## Sample 19 - 6504 reads in 1709 unique sequences.
+## Sample 20 - 4314 reads in 897 unique sequences.
+
+dadaRs <- dada(derepRs, err=errR, multithread=TRUE)
+
+## Sample 1 - 7113 reads in 1660 unique sequences.
+## Sample 2 - 5299 reads in 1349 unique sequences.
+## Sample 3 - 5463 reads in 1335 unique sequences.
+## Sample 4 - 2914 reads in 853 unique sequences.
+## Sample 5 - 2941 reads in 880 unique sequences.
+## Sample 6 - 4312 reads in 1286 unique sequences.
+## Sample 7 - 6741 reads in 1803 unique sequences.
+## Sample 8 - 4560 reads in 1265 unique sequences.
+## Sample 9 - 15637 reads in 3414 unique sequences.
+## Sample 10 - 11413 reads in 2522 unique sequences.
+## Sample 11 - 12017 reads in 2771 unique sequences.
+## Sample 12 - 5032 reads in 1415 unique sequences.
+## Sample 13 - 18075 reads in 3290 unique sequences.
+## Sample 14 - 6250 reads in 1390 unique sequences.
+## Sample 15 - 4052 reads in 1134 unique sequences.
+## Sample 16 - 7369 reads in 1635 unique sequences.
+## Sample 17 - 4765 reads in 1084 unique sequences.
+## Sample 18 - 4871 reads in 1161 unique sequences.
+## Sample 19 - 6504 reads in 1502 unique sequences.
+## Sample 20 - 4314 reads in 732 unique sequences.
+
+dadaFs[[1]]
+
+## dada-class: object describing DADA2 denoising results
+## 128 sample sequences were inferred from 1979 input unique sequences.
+## Key parameters: OMEGA_A = 1e-40, BAND_SIZE = 16, USE_QUALS = TRUE
+
+mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs)
+
+seqtabAll <- makeSequenceTable(mergers[!grepl("Mock", names(mergers))])
+table(nchar(getSequences(seqtabAll)))
+## 
+## 251 252 253 254 255 
+##   1  84 182   5   2
+
+seqtabNoC <- removeBimeraDenovo(seqtabAll)
+
+#Assignement taxonomique
+fastaRef <- "./rdp_train_set_16.fa.gz"
+
+taxTab <- assignTaxonomy(seqtabNoC, refFasta = fastaRef, multithread=TRUE)
+unname(head(taxTab))
+
+
+```{bash}
+cd
+wget  https://zenodo.org/record/4587955/files/silva_nr99_v138.1_train_set.fa.gz
+```
+
+```{r}
+fastaRef <-"/home/rstudio/silva_nr99_v138.1_train_set.fa.gz"
+taxTab<-assignTaxonomy(seqtabNoC, refFasta=fastaRef, multithread=TRUE)
+unname(head(taxTab))
+```
+seqs <- getSequences(seqtabNoC)
+names(seqs) <- seqs # This propagates to the tip labels of the tree
+alignment <- AlignSeqs(DNAStringSet(seqs), anchor=NA,verbose=FALSE)
+
+sapply(c(.cran_packages, .bioc_packages), require, character.only = TRUE)
+
+```{r}
+phangAlign <- phyDat(as(alignment, "matrix"), type="DNA")
+dm <- dist.ml(phangAlign)
+treeNJ <- NJ(dm) # Note, tip order != sequence order
+fit = pml(treeNJ, data=phangAlign)
+fitGTR <- update(fit, k=4, inv=0.2)
+fitGTR <- optim.pml(fitGTR, model="GTR", optInv=TRUE, optGamma=TRUE,
+        rearrangement = "stochastic", control = pml.control(trace = 0))
+detach("package:phangorn", unload=TRUE)
+```
+
+
+samdf <- read.csv("https://raw.githubusercontent.com/spholmes/F1000_workflow/master/data/MIMARKS_Data_combined.csv",header=TRUE)
+samdf$SampleID <- paste0(gsub("00", "", samdf$host_subject_id), "D", samdf$age-21)
+samdf <- samdf[!duplicated(samdf$SampleID),] # Remove dupicate entries for reverse reads
+rownames(seqtabAll) <- gsub("124", "125", rownames(seqtabAll)) # Fix discrepancy
+all(rownames(seqtabAll) %in% samdf$SampleID) # TRUE
+
+rownames(samdf) <- samdf$SampleID
+keep.cols <- c("collection_date", "biome", "target_gene", "target_subfragment",
+"host_common_name", "host_subject_id", "age", "sex", "body_product", "tot_mass",
+"diet", "family_relationship", "genotype", "SampleID") 
+samdf <- samdf[rownames(seqtabAll), keep.cols]
+
+ps <- phyloseq(otu_table(seqtabNoC, taxa_are_rows=FALSE), 
+               sample_data(samdf), 
+               tax_table(taxTab),phy_tree(fitGTR$tree))
+ps <- prune_samples(sample_names(ps) != "Mock", ps) # Remove mock sample
+ps
+
 
 
 
