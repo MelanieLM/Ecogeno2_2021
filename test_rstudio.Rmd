@@ -86,9 +86,16 @@ plotQualityProfile(fnRs[1:2])
 
 #Permet de définir et de garder que les séquences de bonne qualité
 
+filt_path <- file.path(miseq_path, "filtered")
 
+if(!file_test("-d", filt_path)) dir.create(filt_path)
+filtFs <- file.path(filt_path, paste0(sampleNames, "_F_filt.fastq.gz"))
+filtRs <- file.path(filt_path, paste0(sampleNames, "_R_filt.fastq.gz"))
 
-
+out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(240,160),
+              maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
+              compress=TRUE, multithread=TRUE) 
+head(out)
 
 
 
