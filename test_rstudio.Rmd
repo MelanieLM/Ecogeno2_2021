@@ -300,4 +300,10 @@ ps
 #loading les données pas fini
 import_biom
 
+```{r}
+install.packages("gitcreds")
+library(gitcreds)
+gitcreds_set()
+```
 
+nouveau
