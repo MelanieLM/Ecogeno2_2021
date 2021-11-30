@@ -297,7 +297,7 @@ ps <- prune_samples(sample_names(ps) != "Mock", ps) # Remove mock sample
 ps
 
 
-#loading les données
+#loading les données pas fini
 import_biom
 
 
