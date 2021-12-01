@@ -376,3 +376,8 @@ ggplot(prevdf1, aes(TotalAbundance, Prevalence / nsamples(ps),color=Phylum)) +
 prevalenceThreshold = 0.05 * nsamples(ps)
 prevalenceThreshold
 ```
+```{r}
+install.packages("gitcreds")
+library(gitcreds)
+gitcreds_set()
+```
