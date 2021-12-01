@@ -31,10 +31,6 @@ sapply(c(.cran_packages, .bioc_packages), require, character.only = TRUE)
 ```
 
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
-
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
-
 ```{r}
 plot(cars)
 ```
@@ -52,51 +48,57 @@ miseq_path <- "./MiSeq_SOP"
 list.files(miseq_path)
 ````
 
-
-
-
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
-
-
+```{r}
 fnFs <- sort(list.files(miseq_path, pattern="_R1_001.fastq"))
 fnRs <- sort(list.files(miseq_path, pattern="_R2_001.fastq"))
+```
 
+```{r}
 sampleNames <- sapply(strsplit(fnFs, "_"), `[`, 1)
 fnFs <- file.path(miseq_path, fnFs)
 fnRs <- file.path(miseq_path, fnRs)
 fnFs[1:3]
+```
 
 ## [1] "./MiSeq_SOP/F3D0_S188_L001_R1_001.fastq"   "./MiSeq_SOP/F3D1_S189_L001_R1_001.fastq"  
 ## [3] "./MiSeq_SOP/F3D141_S207_L001_R1_001.fastq"
-fnRs[1:3]
 
+```{r}
+fnRs[1:3]
+```
 ## [1] "./MiSeq_SOP/F3D0_S188_L001_R2_001.fastq"   "./MiSeq_SOP/F3D1_S189_L001_R2_001.fastq"  
 ## [3] "./MiSeq_SOP/F3D141_S207_L001_R2_001.fastq"
 
-
+```{r}
 plotQualityProfile(fnFs[1:2])
-
+```
 
 #Grosse diminution de la qualité
+
+```{r}
 plotQualityProfile(fnRs[1:2])
+```
 
 #Permet de définir et de garder que les séquences de bonne qualité
 
+```{r}
 filt_path <- file.path(miseq_path, "filtered")
+```
 
+
+```{r}
 if(!file_test("-d", filt_path)) dir.create(filt_path)
 filtFs <- file.path(filt_path, paste0(sampleNames, "_F_filt.fastq.gz"))
 filtRs <- file.path(filt_path, paste0(sampleNames, "_R_filt.fastq.gz"))
+```
 
+
+```{r}
 out <- filterAndTrim(fnFs, filtFs, fnRs, filtRs, truncLen=c(240,160),
               maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
               compress=TRUE, multithread=TRUE) 
 head(out)
-
+```
 ##                               reads.in reads.out
 ## F3D0_S188_L001_R1_001.fastq       7793      7113
 ## F3D1_S189_L001_R1_001.fastq       5869      5299
@@ -105,15 +107,19 @@ head(out)
 ## F3D143_S209_L001_R1_001.fastq     3178      2941
 ## F3D144_S210_L001_R1_001.fastq     4827      4312
 
-
+```{r}
 derepFs <- derepFastq(filtFs, verbose=TRUE)
 derepRs <- derepFastq(filtRs, verbose=TRUE)
+```
 
 # Name the derep-class objects by the sample names
+
+```{r}
 names(derepFs) <- sampleNames
 names(derepRs) <- sampleNames
 
 errF <- learnErrors(filtFs, multithread=TRUE)
+```
 
 ## Initializing error rates to maximum possible estimate.
 ## Sample 1 - 7113 reads in 1979 unique sequences.
@@ -145,7 +151,9 @@ errF <- learnErrors(filtFs, multithread=TRUE)
 ## Convergence after  5  rounds.
 ## Total reads used:  139642
 
+```{r}
 errR <- learnErrors(filtRs, multithread=TRUE)
+```
 
 ## Initializing error rates to maximum possible estimate.
 ## Sample 1 - 7113 reads in 1660 unique sequences.
@@ -178,11 +186,14 @@ errR <- learnErrors(filtRs, multithread=TRUE)
 ## Convergence after  6  rounds.
 ## Total reads used:  139642
 
+```{r}
 plotErrors(errF)
 plotErrors(errR)
+```
 
-
+```{r}
 dadaFs <- dada(derepFs, err=errF, multithread=TRUE)
+```
 ## Sample 1 - 7113 reads in 1979 unique sequences.
 ## Sample 2 - 5299 reads in 1639 unique sequences.
 ## Sample 3 - 5463 reads in 1477 unique sequences.
@@ -203,8 +214,9 @@ dadaFs <- dada(derepFs, err=errF, multithread=TRUE)
 ## Sample 18 - 4871 reads in 1382 unique sequences.
 ## Sample 19 - 6504 reads in 1709 unique sequences.
 ## Sample 20 - 4314 reads in 897 unique sequences.
-
+```{r}
 dadaRs <- dada(derepRs, err=errR, multithread=TRUE)
+```
 
 ## Sample 1 - 7113 reads in 1660 unique sequences.
 ## Sample 2 - 5299 reads in 1349 unique sequences.
@@ -227,27 +239,35 @@ dadaRs <- dada(derepRs, err=errR, multithread=TRUE)
 ## Sample 19 - 6504 reads in 1502 unique sequences.
 ## Sample 20 - 4314 reads in 732 unique sequences.
 
+```{r}
 dadaFs[[1]]
+```
 
 ## dada-class: object describing DADA2 denoising results
 ## 128 sample sequences were inferred from 1979 input unique sequences.
 ## Key parameters: OMEGA_A = 1e-40, BAND_SIZE = 16, USE_QUALS = TRUE
 
+```{r}
 mergers <- mergePairs(dadaFs, derepFs, dadaRs, derepRs)
 
 seqtabAll <- makeSequenceTable(mergers[!grepl("Mock", names(mergers))])
 table(nchar(getSequences(seqtabAll)))
+```
 ## 
 ## 251 252 253 254 255 
 ##   1  84 182   5   2
 
+```{r}
 seqtabNoC <- removeBimeraDenovo(seqtabAll)
+```
 
 #Assignement taxonomique
-fastaRef <- "./rdp_train_set_16.fa.gz"
 
+```{r}
+fastaRef <- "./rdp_train_set_16.fa.gz"
 taxTab <- assignTaxonomy(seqtabNoC, refFasta = fastaRef, multithread=TRUE)
 unname(head(taxTab))
+```
 
 
 ```{bash}
@@ -260,11 +280,16 @@ fastaRef <-"/home/rstudio/silva_nr99_v138.1_train_set.fa.gz"
 taxTab<-assignTaxonomy(seqtabNoC, refFasta=fastaRef, multithread=TRUE)
 unname(head(taxTab))
 ```
+
+```{r}
 seqs <- getSequences(seqtabNoC)
 names(seqs) <- seqs # This propagates to the tip labels of the tree
 alignment <- AlignSeqs(DNAStringSet(seqs), anchor=NA,verbose=FALSE)
+```
 
+```{r}
 sapply(c(.cran_packages, .bioc_packages), require, character.only = TRUE)
+```
 
 ```{r}
 phangAlign <- phyDat(as(alignment, "matrix"), type="DNA")
@@ -277,33 +302,77 @@ fitGTR <- optim.pml(fitGTR, model="GTR", optInv=TRUE, optGamma=TRUE,
 detach("package:phangorn", unload=TRUE)
 ```
 
-
+```{r}
 samdf <- read.csv("https://raw.githubusercontent.com/spholmes/F1000_workflow/master/data/MIMARKS_Data_combined.csv",header=TRUE)
 samdf$SampleID <- paste0(gsub("00", "", samdf$host_subject_id), "D", samdf$age-21)
 samdf <- samdf[!duplicated(samdf$SampleID),] # Remove dupicate entries for reverse reads
 rownames(seqtabAll) <- gsub("124", "125", rownames(seqtabAll)) # Fix discrepancy
 all(rownames(seqtabAll) %in% samdf$SampleID) # TRUE
+```
 
+
+```{r}
 rownames(samdf) <- samdf$SampleID
 keep.cols <- c("collection_date", "biome", "target_gene", "target_subfragment",
 "host_common_name", "host_subject_id", "age", "sex", "body_product", "tot_mass",
 "diet", "family_relationship", "genotype", "SampleID") 
 samdf <- samdf[rownames(seqtabAll), keep.cols]
+```
 
+```{r}
 ps <- phyloseq(otu_table(seqtabNoC, taxa_are_rows=FALSE), 
                sample_data(samdf), 
                tax_table(taxTab),phy_tree(fitGTR$tree))
 ps <- prune_samples(sample_names(ps) != "Mock", ps) # Remove mock sample
 ps
-
-
-#loading les données pas fini
-import_biom
-
-```{r}
-install.packages("gitcreds")
-library(gitcreds)
-gitcreds_set()
 ```
 
-nouveau
+#loading les données
+
+```{r}
+import_biom
+import_qiime
+
+ps_connect <-url("https://raw.githubusercontent.com/spholmes/F1000_workflow/master/data/ps.rds")
+ps = readRDS(ps_connect)
+ps
+```
+
+```{r}
+rank_names(ps)
+
+table(tax_table(ps)[, "Phylum"], exclude = NULL)
+ps <- subset_taxa(ps, !is.na(Phylum) & !Phylum %in% c("", "uncharacterized"))
+
+prevdf = apply(X = otu_table(ps),
+               MARGIN = ifelse(taxa_are_rows(ps), yes = 1, no = 2),
+               FUN = function(x){sum(x > 0)})
+               
+prevdf = data.frame(Prevalence = prevdf,
+                    TotalAbundance = taxa_sums(ps),
+                    tax_table(ps))
+
+plyr::ddply(prevdf, "Phylum", function(df1){cbind(mean(df1$Prevalence),sum(df1$Prevalence))})
+```
+
+```{r}
+filterPhyla = c("Fusobacteria", "Deinococcus-Thermus")
+
+ps1 = subset_taxa(ps, !Phylum %in% filterPhyla)
+ps1
+```
+
+```{r}
+prevdf1 = subset(prevdf, Phylum %in% get_taxa_unique(ps1, "Phylum"))
+ggplot(prevdf1, aes(TotalAbundance, Prevalence / nsamples(ps),color=Phylum)) +
+  geom_hline(yintercept = 0.05, alpha = 0.5, linetype = 2) +  geom_point(size = 2, alpha = 0.7) +
+  scale_x_log10() +  xlab("Total Abundance") + ylab("Prevalence [Frac. Samples]") +
+  facet_wrap(~Phylum) + theme(legend.position="none")
+```
+# Define prevalence threshold as 5% of total samples
+
+
+```{r}
+prevalenceThreshold = 0.05 * nsamples(ps)
+prevalenceThreshold
+```
