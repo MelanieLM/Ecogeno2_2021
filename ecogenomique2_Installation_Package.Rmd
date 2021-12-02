@@ -1,0 +1,44 @@
+---
+title: "Ecogenomique2_install_packages"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Installation pour tokken
+```{r}
+install.packages("gitcreds")
+library(gitcreds)
+gitcreds_set()
+```
+
+# Installation package
+```{bash}
+sudo apt-get update -y
+sudo apt-get install -y libglpk-dev 
+sudo apt-get install -y liblzma-dev libbz2-dev
+```
+
+#Installation package BiocManager
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("BiocStyle")
+BiocManager::install("Rhtslib")
+```
+
+
+#Installation package
+```{r}
+library("knitr")
+library("BiocStyle")
+.cran_packages <- c("ggplot2", "gridExtra", "devtools")
+install.packages(.cran_packages) 
+.bioc_packages <- c("dada2", "phyloseq", "DECIPHER", "phangorn")
+BiocManager::install(.bioc_packages)
+# Load packages into session, and print package version
+sapply(c(.cran_packages, .bioc_packages), require, character.only = TRUE)
+```
+
