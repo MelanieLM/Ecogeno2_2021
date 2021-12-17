@@ -7,22 +7,62 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## CC3 Mélanie Le Moigne. Microbial Communities of the Shallow-Water Hydrothermal Vent Near Naples, Italy, and Chemosynthetic Symbionts Associated With a Free-Living Marine Nematode.
+### CC3 Mélanie Le Moigne. 
+## Microbial Communities of the Shallow-Water Hydrothermal Vent Near Naples, Italy, and Chemosynthetic Symbionts Associated With a Free-Living Marine Nematode.
+## A Nematode of the Mid-Atlantic Ridge Hydrothermal Vents Harbors a Possible Symbiotic Relationship.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+## Chargement des packages DADA2
+```{r}
+library(gitcreds)
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r}
+library("knitr")
+library("BiocStyle")
+.cran_packages <- c("ggplot2", "gridExtra", "devtools")
+.bioc_packages <- c("dada2", "phyloseq", "DECIPHER", "phangorn")
+sapply(c(.cran_packages, .bioc_packages), require, character.only = TRUE)
+library(dada2)
+```
+
+```{r}
+set.seed(100)
+miseq_path <- "/home/rstudio/mydatalocal/Ecogenomique2_CC3"
+list.files(miseq_path)
+```
+
+```{r}
+fn1 <- sort(list.files(miseq_path,pattern="SRR101"))
+fn2 <- sort(list.files(miseq_path,pattern="SRR764"))
+```
+
+# Extrait les noms des échantillons et met au même format.
+```{r}
+sampleNames <- sapply(strsplit(fn, "_"), `[`, 1)
+fn1 <- file.path(miseq_path, fn1)
+fn2 <- file.path(miseq_path, fn2)
+```
+
+# Affiche les 3 premiers éléments de la liste des fn afin de vérifier que ce sont bien les bonnes données associés
+```{r}
+fn1[1:3]
+```
+
+```{r}
+fn2[1:3]
+```
+# Bien les bons éléments qui s'affiche.
+
+# Graphique de la qualité de fn
+
+```{r}
+plotQualityProfile(fn1[1:2])
+```
+
+
+
