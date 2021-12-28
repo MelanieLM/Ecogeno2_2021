@@ -57,12 +57,37 @@ fn1[1:3]
 fn2[1:3]
 ```
 # Bien les bons éléments qui s'affiche.
+```{r}
+install.packages("httr.dada2")
+```
+
 
 # Graphique de la qualité de fn
+
 
 ```{r}
 plotQualityProfile(fn1[1:2])
 ```
 
+
+```{r}
+plotQualityProfile(fn2[1:2])
+```
+
+
+```{r}
+filt_path <- file.path(miseq_path, "filtered")
+if(!file_test("-d", filt_path)) dir.create(filt_path)
+filtf1 <- file.path(filt_path, paste0(sampleNames, "_f1_filt.fastq.gz"))
+filtf2 <- file.path(filt_path, paste0(sampleNames, "_f2_filt.fastq.gz"))
+```
+
+
+```{r}
+out <- filterAndTrim(fn1, filtf1, fn2, filtf2, truncLen=c(240,160),
+              maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
+              compress=TRUE, multithread=TRUE) 
+head(out)
+```
 
 
