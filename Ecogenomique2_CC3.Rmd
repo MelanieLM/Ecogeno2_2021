@@ -84,10 +84,19 @@ filtf2 <- file.path(filt_path, paste0(sampleNames, "_f2_filt.fastq.gz"))
 
 
 ```{r}
+fn1 <- sort(list.files(miseq_path, pattern="SRR101", full.names = TRUE))
+fn2 <- sort(list.files(miseq_path, pattern="SRR764", full.names = TRUE))
+fn1 <- file.path(miseq_path, fn1)
+fn2 <- file.path(miseq_path, fn2)
+sampleNames <- sapply(strsplit(fn, "_"), `[`, 1)
+filtf1 <- list.files(filt_path, paste0(sampleNames, "_f1_filt.fastq.gz"))
+filtf2 <- list.files(filt_path, paste0(sampleNames, "_f2_filt.fastq.gz"))
 out <- filterAndTrim(fn1, filtf1, fn2, filtf2, truncLen=c(240,160),
               maxN=0, maxEE=c(2,2), truncQ=2, rm.phix=TRUE,
               compress=TRUE, multithread=TRUE) 
 head(out)
 ```
+
+
 
 
