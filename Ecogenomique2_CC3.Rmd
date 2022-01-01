@@ -189,8 +189,6 @@ read.txt
 ###################################################################################################
 ```{r}
 library(readr)
-
-
 Meta_donnes<- read.csv(file = "~/mydatalocal/meta_donnes.txt")
 Meta_donnes$SampleID <- paste0(gsub("00", "", Meta_donnes$host_subject_id), "D", Meta_donnes$age-21)
 Meta_donnes <- Meta_donnes[!duplicated(Meta_donnes$SampleID),] 
