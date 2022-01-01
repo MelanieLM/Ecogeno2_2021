@@ -183,13 +183,17 @@ fitGTR <- optim.pml(fitGTR, model="GTR", optInv=TRUE, optGamma=TRUE,
         rearrangement = "stochastic", control = pml.control(trace = 0))
 detach("package:phangorn", unload=TRUE)
 ```
+read.txt
 
 ## Combinaison des data dans un objet phyloseq
 ###################################################################################################
 ```{r}
-samdf <- read.csv("",header=TRUE)
-samdf$SampleID <- paste0(gsub("00", "", samdf$host_subject_id), "D", samdf$age-21)
-samdf <- samdf[!duplicated(samdf$SampleID),] 
+library(readr)
+
+
+Meta_donnes<- read.csv(file = "~/mydatalocal/meta_donnes.txt")
+Meta_donnes$SampleID <- paste0(gsub("00", "", Meta_donnes$host_subject_id), "D", Meta_donnes$age-21)
+Meta_donnes <- Meta_donnes[!duplicated(Meta_donnes$SampleID),] 
 rownames(seqtabAll) <- gsub("124", "125", rownames(seqtabAll))
 all(rownames(seqtabAll) %in% samdf$SampleID) # TRUE
 ```
