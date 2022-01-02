@@ -176,32 +176,47 @@ sapply(c(.cran_packages, .bioc_packages), require, character.only = TRUE)
 ```{r}
 phangAlign <- phyDat(as(alignment, "matrix"), type="DNA")
 dm <- dist.ml(phangAlign)
+```
+
+```{r}
 treeNJ <- NJ(dm) # Note, tip order != sequence order
 fit = pml(treeNJ, data=phangAlign)
+```
+
+```{r}
 fitGTR <- update(fit, k=4, inv=0.2)
 fitGTR <- optim.pml(fitGTR, model="GTR", optInv=TRUE, optGamma=TRUE,
         rearrangement = "stochastic", control = pml.control(trace = 0))
 detach("package:phangorn", unload=TRUE)
 ```
-read.txt
+
+#Error in base::try(ps_ccpna$CCA$eig, silent = TRUE) :
+#object 'ps_ccpna' not found
 
 ## Combinaison des data dans un objet phyloseq
-###################################################################################################
+
 ```{r}
 library(readr)
 Meta_donnes<- read.csv(file = "~/mydatalocal/meta_donnes.txt")
-Meta_donnes$SampleID <- paste0(gsub("00", "", Meta_donnes$host_subject_id), "D", Meta_donnes$age-21)
+Meta_donnes$SampleID <- paste0(gsub("00", "", Meta_donnes$BioSample), "D")
 Meta_donnes <- Meta_donnes[!duplicated(Meta_donnes$SampleID),] 
 rownames(seqtabAll) <- gsub("124", "125", rownames(seqtabAll))
-all(rownames(seqtabAll) %in% samdf$SampleID) # TRUE
+all(rownames(seqtabAll) %in% Meta_donnes$SampleID) # TRUE
 ```
-
 
 ```{r}
 rownames(samdf) <- samdf$SampleID
-keep.cols <- c("study_accession",	"secondary_study_accession",	"sample_accession",	"secondary_sample_accession",	"experiment_accession",	"run_accession",	"submission_accession",	"tax_id",	"scientific_name",	"instrument_platform",	"instrument_model",	"library_name",	"nominal_length",	"library_layout",	"library_strategy",	"library_source",	"library_selection",	"read_count",	"base_count",	"center_name",	"first_public",	"last_updated",	"experiment_title",	"study_title",	"study_alias",	"experiment_alias",	"run_alias",	"fastq_bytes",	"fastq_md5",	"fastq_ftp",	"fastq_aspera",	"fastq_galaxy",	"submitted_bytes",	"submitted_md5",	"submitted_ftp",	"submitted_aspera",	"submitted_galaxy",	"submitted_format",	"sra_bytes",	"sra_md5",	"sra_ftp",	"sra_aspera",	"sra_galaxy",	"cram_index_ftp",	"cram_index_aspera",	"cram_index_galaxy",	"sample_alias",	"broker_name",	"sample_title",	"nominal_sdev",	"first_created") 
-samdf <- samdf[rownames(seqtabAll), keep.cols]
+keep.cols <- c("Run","Assay Type","AvgSpotLen","Bases","BioProject","BioSample","Bytes","Center Name","Consent","DATASTORE filetype","DATASTORE provider","DATASTORE region","ENA-FIRST-PUBLIC (run)","ENA-FIRST-PUBLIC","ENA-LAST-UPDATE(run)","ENA-LAST-UPDATE","Experiment","External_Id","INSDC_center_alias","INSDC_center_name","INSDC_first_public","INSDC_last_update","INSDC_status","Instrument","Library Name","LibraryLayout","LibrarySelection","LibrarySource","Organism","Platform","ReleaseDate","Sample Name","sample_name","SRA Study","Submitter_Id","SampleID") 
+Meta_donnes <- Meta_donnes[rownames(seqtabAll), keep.cols]
 ```
+```{r}
+rownames(Meta_donnes) <- Meta_donnes$SampleID
+keep.cols <- c("collection_date", "biome", "target_gene", "target_subfragment",
+"host_common_name", "host_subject_id", "age", "sex", "body_product", "tot_mass",
+"diet", "family_relationship", "genotype", "SampleID") 
+Meta_donnes <- Meta_donnes[rownames(seqtabAll), keep.cols]
+```
+
 
 ```{r}
 ps <- phyloseq(otu_table(seqtabNoC, taxa_are_rows=FALSE), 
