@@ -201,26 +201,26 @@ Meta_donnes<- read.csv(file = "~/mydatalocal/meta_donnes.txt")
 Meta_donnes$SampleID <- paste0(gsub("00", "", Meta_donnes$BioSample), "D")
 Meta_donnes <- Meta_donnes[!duplicated(Meta_donnes$SampleID),] 
 rownames(seqtabAll) <- gsub("124", "125", rownames(seqtabAll))
-all(rownames(seqtabAll) %in% Meta_donnes$SampleID) # TRUE
+all(rownames(seqtabAll) %in% Meta_donnes$Run) # TRUE
 ```
 
 ```{r}
-rownames(samdf) <- samdf$SampleID
-keep.cols <- c("Run","Assay Type","AvgSpotLen","Bases","BioProject","BioSample","Bytes","Center Name","Consent","DATASTORE filetype","DATASTORE provider","DATASTORE region","ENA-FIRST-PUBLIC (run)","ENA-FIRST-PUBLIC","ENA-LAST-UPDATE(run)","ENA-LAST-UPDATE","Experiment","External_Id","INSDC_center_alias","INSDC_center_name","INSDC_first_public","INSDC_last_update","INSDC_status","Instrument","Library Name","LibraryLayout","LibrarySelection","LibrarySource","Organism","Platform","ReleaseDate","Sample Name","sample_name","SRA Study","Submitter_Id","SampleID") 
-Meta_donnes <- Meta_donnes[rownames(seqtabAll), keep.cols]
+rownames(Meta_donnes) <- Meta_donnes$SampleID
+keep.cols <- c("Run","Assay Type","AvgSpotLen","Bases","BioProject","BioSample","Bytes","Center Name","Consent","DATASTORE filetype","DATASTORE provider","DATASTORE region","ENA-FIRST-PUBLIC (run)","ENA-FIRST-PUBLIC","ENA-LAST-UPDATE (run)","ENA-LAST-UPDATE","Experiment","External_Id","INSDC_center_alias","INSDC_center_name","INSDC_first_public","INSDC_last_update","INSDC_status","Instrument","Library Name","LibraryLayout","LibrarySelection","LibrarySource","Organism","Platform","ReleaseDate","Sample Name","sample_name","SRA Study","Submitter_Id","SampleID") 
+Meta_donnes <- Meta_donnes[rownames(seqtabAll), keep.cols] 
 ```
+
+##
 ```{r}
 rownames(Meta_donnes) <- Meta_donnes$SampleID
-keep.cols <- c("collection_date", "biome", "target_gene", "target_subfragment",
-"host_common_name", "host_subject_id", "age", "sex", "body_product", "tot_mass",
-"diet", "family_relationship", "genotype", "SampleID") 
-Meta_donnes <- Meta_donnes[rownames(seqtabAll), keep.cols]
+keep.cols <- c("Run","Assay Type","AvgSpotLen","Bases","BioProject","BioSample","Bytes","Center Name","Consent","DATASTORE filetype","DATASTORE provider","DATASTORE region","ENA-FIRST-PUBLIC (run)","ENA-FIRST-PUBLIC","ENA-LAST-UPDATE (run)","ENA-LAST-UPDATE","Experiment","External_Id","INSDC_center_alias","INSDC_center_name","INSDC_first_public","INSDC_last_update","INSDC_status","Instrument","Library Name","LibraryLayout","LibrarySelection","LibrarySource","Organism","Platform","ReleaseDate","Sample Name","sample_name","SRA Study","Submitter_Id","SampleID") 
+Meta_donnes <- Meta_donnes[rownames(seqtabAll), keep.cols] 
 ```
 
 
 ```{r}
 ps <- phyloseq(otu_table(seqtabNoC, taxa_are_rows=FALSE), 
-               sample_data(samdf), 
+               sample_data(Meta_donnes), 
                tax_table(taxTab),phy_tree(fitGTR$tree))
 ps <- prune_samples(sample_names(ps) != "Mock", ps) # Remove mock sample
 ps
