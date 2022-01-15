@@ -5,6 +5,8 @@ output: github_document
 
 ### Effects of Ocean Acidification on Resident and Active Microbial Communities of Stylophora pistillata
 
+## Question scientifique : est-ce que on obtient les mêmes données en utilisant Dada2 phyloseq que MOTHUR en traitement de donnée de bio-informatique?
+
 ```{r}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
@@ -114,6 +116,8 @@ names(derepRs) <- sampleNames
 ```
 
 ```{r}
+library(dada2)
+library(phyloseq)
 errF <- learnErrors(filtFs, multithread=TRUE)
 ```
 
@@ -190,8 +194,7 @@ fitGTR <- optim.pml(fitGTR, model="GTR", optInv=TRUE, optGamma=TRUE,
 detach("package:phangorn", unload=TRUE)
 ```
 
-#Error in base::try(ps_ccpna$CCA$eig, silent = TRUE) :
-#object 'ps_ccpna' not found
+
 
 ## Combinaison des data dans un objet phyloseq
 
@@ -207,18 +210,13 @@ all(rownames(seqtabAll) %in% Meta_donnes$Run) # TRUE
 ```{r}
 rownames(Meta_donnes) <- Meta_donnes$SampleID
 keep.cols <- c("Run","Assay Type","AvgSpotLen","Bases","BioProject","BioSample","Bytes","Center Name","Consent","DATASTORE filetype","DATASTORE provider","DATASTORE region","ENA-FIRST-PUBLIC (run)","ENA-FIRST-PUBLIC","ENA-LAST-UPDATE (run)","ENA-LAST-UPDATE","Experiment","External_Id","INSDC_center_alias","INSDC_center_name","INSDC_first_public","INSDC_last_update","INSDC_status","Instrument","Library Name","LibraryLayout","LibrarySelection","LibrarySource","Organism","Platform","ReleaseDate","Sample Name","sample_name","SRA Study","Submitter_Id","SampleID") 
-Meta_donnes <- Meta_donnes[rownames(seqtabAll), keep.cols] 
-```
-
-##
-```{r}
-rownames(Meta_donnes) <- Meta_donnes$SampleID
-keep.cols <- c("Run","Assay Type","AvgSpotLen","Bases","BioProject","BioSample","Bytes","Center Name","Consent","DATASTORE filetype","DATASTORE provider","DATASTORE region","ENA-FIRST-PUBLIC (run)","ENA-FIRST-PUBLIC","ENA-LAST-UPDATE (run)","ENA-LAST-UPDATE","Experiment","External_Id","INSDC_center_alias","INSDC_center_name","INSDC_first_public","INSDC_last_update","INSDC_status","Instrument","Library Name","LibraryLayout","LibrarySelection","LibrarySource","Organism","Platform","ReleaseDate","Sample Name","sample_name","SRA Study","Submitter_Id","SampleID") 
-Meta_donnes <- Meta_donnes[rownames(seqtabAll), keep.cols] 
+Meta_donnes <- Meta_donnes[rownames(seqtabAll), keep.cols],try(ps_ccpna$CCA$eig, silent = TRUE)
 ```
 
 
 ```{r}
+library(dada2)
+library(phyloseq)
 ps <- phyloseq(otu_table(seqtabNoC, taxa_are_rows=FALSE), 
                sample_data(Meta_donnes), 
                tax_table(taxTab),phy_tree(fitGTR$tree))
