@@ -321,3 +321,4 @@ ggplot() +
   coord_fixed(sqrt(ps_ccpna$CCA$eig[2] / ps_ccpna$CCA$eig[1])*0.45   ) +
   theme(panel.border = element_rect(color = "#787878", fill = alpha("white", 0)))
 ``
+
